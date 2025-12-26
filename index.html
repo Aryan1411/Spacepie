@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Spacepie — Mining the Future Beyond Earth</title>
+  <meta name="description" content="Spacepie mines the Moon and harvests asteroids using advanced robots, AI, and rockets—bringing only non‑hazardous materials to Earth for a sustainable future." />
+  <meta name="theme-color" content="#0a0f1a" />
+  <meta property="og:title" content="Spacepie — Mining the Future Beyond Earth" />
+  <meta property="og:description" content="Asteroid & lunar mining done safely with robots, AI and rockets. From space → moon → Earth." />
+  <meta property="og:type" content="website" />
+  <style>
+    :root{
+      --bg:#060913;
+      --bg2:#0b1220;
+      --text:#e6ecff;
+      --muted:#a6b2d6;
+      --primary:#6bdcff;
+      --primary-2:#4bc1ff;
+      --accent:#9d7bff;
+      --good:#58e1a4;
+      --warn:#ffca63;
+      --danger:#ff6b7b;
+      --card:#0d1628aa;
+      --stroke:#1b2740;
+      --glow:0 0 24px rgba(107,220,255,0.25), 0 0 48px rgba(77,193,255,0.15);
+      --radius:16px;
+      --radius-sm:12px;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family: "Inter", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      color:var(--text);
+      background: radial-gradient(1200px 800px at 80% -10%, #0a1430 0%, transparent 60%), linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+      overflow-x:hidden;
+    }
+    a{color:var(--primary)}
+    .container{width:min(1200px, 92%); margin-inline:auto}
+    header{
+      position:fixed; inset:0 0 auto 0; height:64px; z-index:50;
+      display:flex; align-items:center;
+      background:linear-gradient(180deg, rgba(6,9,19,0.9), rgba(6,9,19,0.4), rgba(6,9,19,0));
+      backdrop-filter: blur(6px);
+      border-bottom:1px solid rgba(255,255,255,.04);
+    }
+    .brand{
+      display:flex; align-items:center; gap:.75rem; font-weight:700; letter-spacing:.5px;
+    }
+    .brand .logo{
+      width:36px; height:36px; border-radius:50%;
+      background: radial-gradient(circle at 30% 30%, #9d7bff 0%, #4bc1ff 40%, transparent 60%), #111c33;
+      box-shadow: 0 0 0 2px #1b2740 inset, var(--glow);
+      position:relative; overflow:hidden;
+    }
+    .brand .logo::after{
+      content:""; position:absolute; inset:auto -20% -20% -20%; height:110%;
+      background: conic-gradient(from 0deg, transparent, rgba(107,220,255,.4), transparent 30%);
+      filter: blur(10px);
+      animation: spin 8s linear infinite;
+      opacity:.6;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    nav{margin-left:auto; display:flex; align-items:center; gap:1rem}
+    nav a{
+      text-decoration:none; color:var(--text); opacity:.85; font-weight:600; padding:.4rem .7rem; border-radius:8px;
+    }
+    nav a:hover{background:rgba(255,255,255,.05); opacity:1}
+    .btn{
+      appearance:none; border:none; border-radius:999px; padding:.9rem 1.2rem;
+      color:#06101a; background:linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 100%);
+      font-weight:800; letter-spacing:.3px; box-shadow: var(--glow);
+      cursor:pointer;
+    }
+    .btn.secondary{
+      color:var(--text); background:transparent; border:1px solid var(--stroke); box-shadow:none;
+    }
+    .menu-btn{display:none; background:transparent; border:1px solid var(--stroke); padding:.5rem .65rem; border-radius:10px; color:var(--text)}
+    @media(max-width:900px){
+      nav.desktop{display:none}
+      .menu-btn{display:block; margin-left:auto}
+    }
+    .mobile-drawer{
+      position:fixed; inset:64px 0 0 0; background:rgba(6,9,19,.95); backdrop-filter: blur(8px); z-index:49; display:none;
+      padding:1rem; border-top:1px solid rgba(255,255,255,.05);
+    }
+    .mobile-drawer.open{display:block}
+    .mobile-drawer a{display:block; padding:1rem; color:var(--text); text-decoration:none; border-bottom:1px solid rgba(255,255,255,.06)}
+
+    /* Background canvases */
+    #stars, #stars2{
+      position:fixed; inset:0; z-index:-2; pointer-events:none;
+    }
+    .space-gradient{
+      position:fixed; inset:0; z-index:-1; pointer-events:none;
+      background:
+        radial-gradient(800px 500px at 20% 10%, rgba(77,193,255,0.10), transparent 70%),
+        radial-gradient(600px 400px at 80% 0%, rgba(157,123,255,0.08), transparent 70%);
+    }
+
+    main section{padding: min(12vh, 120px) 0}
+    .section-title{
+      font-size: clamp(22px, 2.6vw, 40px); margin:0 0 10px; letter-spacing:.6px;
+    }
+    .section-sub{color:var(--muted); margin:0 0 24px}
+
+    /* Hero */
+    #hero{padding: 16vh 0 14vh 0; position:relative; overflow:hidden}
+    .hero-grid{display:grid; grid-template-columns: 1.2fr 1fr; align-items:center; gap:2rem}
+    @media(max-width:900px){.hero-grid{grid-template-columns:1fr}}
+    .eyebrow{color:var(--primary); font-weight:800; letter-spacing:.3em; font-size:.9rem; text-transform:uppercase}
+    .hero h1{
+      font-size: clamp(28px, 4.8vw, 64px); line-height:1.08; margin:.5rem 0 1rem;
+      background: linear-gradient(180deg, #fff, #cfeaff 60%, #9ad8ff 100%);
+      -webkit-background-clip: text; background-clip: text; color:transparent;
+      text-shadow: 0 10px 40px rgba(107,220,255,.15);
+    }
+    .hero-actions{display:flex; flex-wrap:wrap; gap:1rem; margin-top:1rem}
+    .hero-note{color:var(--muted); margin-top:.75rem}
+    .orbital{
+      position:absolute; inset:auto -5% -10% auto; width:min(600px, 40vw); opacity:.75;
+      filter: drop-shadow(0 30px 50px rgba(0,0,0,.6));
+      pointer-events:none;
+    }
+    .orbital svg{width:100%; height:auto}
+    .rocket{transform-origin:center; animation: float 5s ease-in-out infinite}
+    .flame{animation: flame 200ms ease-in-out infinite alternate}
+    .asteroid{animation: drift 18s linear infinite; transform-origin:50% 50%}
+    @keyframes float{0%,100%{transform:translateY(-6px)}50%{transform:translateY(6px)}}
+    @keyframes flame{from{opacity:.5; transform:scaleY(.7)}to{opacity:1; transform:scaleY(1)}}
+    @keyframes drift{from{transform:translateX(0) rotate(0)}to{transform:translateX(-8px) rotate(360deg)}}
+
+    .scroll-indicator{
+      position:absolute; left:50%; bottom:10px; transform:translateX(-50%); font-size:.9rem; color:var(--muted);
+      display:flex; flex-direction:column; align-items:center; gap:.3rem; opacity:.8
+    }
+    .scroll-indicator .dot{width:8px; height:8px; border-radius:50%; background:var(--primary); animation:bob 1.6s ease-in-out infinite}
+    @keyframes bob{0%,100%{transform:translateY(0); opacity:.8}50%{transform:translateY(8px); opacity:.4}}
+
+    /* Cards / grid basics */
+    .grid-3{display:grid; grid-template-columns: repeat(3,1fr); gap:1.2rem}
+    .grid-2{display:grid; grid-template-columns: repeat(2,1fr); gap:1.2rem}
+    @media(max-width:900px){.grid-3,.grid-2{grid-template-columns:1fr}}
+    .card{
+      background: linear-gradient(180deg, rgba(13,22,40,.8), rgba(13,22,40,.55));
+      border:1px solid var(--stroke);
+      border-radius: var(--radius);
+      padding:1.2rem;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .card::after{
+      content:""; position:absolute; inset: -2px -2px auto auto; width:120px; height:120px; border-radius:50%;
+      background: radial-gradient(circle, rgba(107,220,255,.3), transparent 60%);
+      filter: blur(20px); opacity:.25;
+    }
+
+    /* Problem visuals */
+    .stat{
+      display:flex; align-items:flex-start; gap:1rem
+    }
+    .icon{
+      min-width:44px; height:44px; border-radius:12px; display:grid; place-items:center;
+      background:linear-gradient(180deg, rgba(107,220,255,.15), rgba(77,193,255,.05));
+      border:1px solid var(--stroke);
+      box-shadow: inset 0 0 0 1px rgba(107,220,255,.1);
+      color:#ccf2ff;
+    }
+    .bar{
+      width:100%; height:10px; border-radius:999px; background:#111a2e; border:1px solid var(--stroke); overflow:hidden; margin-top:.5rem
+    }
+    .bar > span{
+      display:block; height:100%; width:0%; background:linear-gradient(90deg, var(--danger), var(--warn));
+      transition:width 1.6s ease;
+    }
+    .badge{display:inline-block; padding:.25rem .6rem; border:1px solid var(--stroke); border-radius:99px; color:var(--muted); font-size:.8rem}
+
+    /* Solution */
+    .tick{color:var(--good); font-weight:800}
+    .pulse-dot{
+      width:10px; height:10px; border-radius:50%; background:var(--good); box-shadow:0 0 0 0 rgba(88,225,164,.6);
+      animation:pulse 1.8s ease-out infinite;
+    }
+    @keyframes pulse{to{box-shadow:0 0 0 16px rgba(88,225,164,0);}}
+
+    /* Journey / Steps */
+    #journey .steps{
+      position:relative; overflow:hidden;
+    }
+    .flow{
+      position:absolute; inset:auto 0 0 0; height:2px; background:linear-gradient(90deg, transparent, rgba(107,220,255,.5), transparent);
+      opacity:.5
+    }
+    .stepper{
+      display:grid; grid-template-columns: repeat(5, minmax(200px, 1fr)); gap:1rem; overflow:auto; padding-bottom:.5rem; scroll-snap-type: x mandatory
+    }
+    .step{
+      scroll-snap-align:start;
+      border:1px solid var(--stroke); border-radius:var(--radius); padding:1rem; background:rgba(13,22,40,.6); min-height:170px;
+      position:relative;
+    }
+    .step .num{
+      position:absolute; inset:12px 12px auto auto; font-weight:800; color:var(--muted)
+    }
+    .step h4{margin:0 0 .3rem}
+    .step .mini{
+      height:90px; margin:.5rem 0; border-radius:10px; background:linear-gradient(180deg, rgba(155,200,255,.08), rgba(50,90,150,.06));
+      border:1px dashed rgba(107,220,255,.25); position:relative; overflow:hidden;
+    }
+    .dots{
+      position:absolute; inset:0; background-image: radial-gradient(rgba(107,220,255,.18) 1px, transparent 1px);
+      background-size: 14px 14px; filter: blur(.2px);
+      animation: pan 20s linear infinite;
+    }
+    @keyframes pan{to{background-position: 200px 100px}}
+
+    /* Technology cards */
+    .tech{display:grid; grid-template-columns: repeat(4, 1fr); gap:1rem}
+    @media(max-width:1100px){.tech{grid-template-columns: repeat(2, 1fr)}}
+    @media(max-width:640px){.tech{grid-template-columns: 1fr}}
+    .tech .card{transition: transform .3s ease, box-shadow .3s ease}
+    .tech .card:hover{transform: translateY(-4px); box-shadow: 0 20px 50px rgba(0,0,0,.45)}
+    .chip{
+      display:inline-flex; align-items:center; gap:.5rem; background:rgba(107,220,255,.1);
+      padding:.35rem .6rem; border-radius:999px; border:1px solid rgba(107,220,255,.25); color:#c9efff; font-size:.85rem; font-weight:700
+    }
+
+    /* Safety */
+    .safety{display:grid; grid-template-columns: 1.2fr .8fr; gap:1.2rem}
+    @media(max-width:900px){.safety{grid-template-columns:1fr}}
+    .safety-list li{margin:.7rem 0; display:flex; gap:.6rem; align-items:flex-start}
+    .safety-list .check{color:var(--good); margin-top:.2rem}
+    .radar{
+      height:260px; border-radius:var(--radius); border:1px solid var(--stroke); background:radial-gradient(circle at 50% 50%, rgba(107,220,255,.1), rgba(13,22,40,.5) 60%), #0e1930; position:relative; overflow:hidden
+    }
+    .radar .sweep{
+      position:absolute; inset:0; background: conic-gradient(from 0deg, rgba(107,220,255,.15), transparent 40%);
+      animation: spin 6s linear infinite; mix-blend-mode: screen
+    }
+    .radar .spot{
+      position:absolute; width:8px; height:8px; border-radius:50%; background:var(--primary); box-shadow:0 0 12px rgba(107,220,255,.8)
+    }
+
+    /* Contact */
+    .contact-grid{display:grid; grid-template-columns: .9fr 1.1fr; gap:1rem}
+    @media(max-width:1000px){.contact-grid{grid-template-columns:1fr}}
+    form .row{display:grid; grid-template-columns:1fr 1fr; gap:.8rem}
+    @media(max-width:640px){form .row{grid-template-columns:1fr}}
+    label{display:block; font-size:.9rem; color:var(--muted); margin:.3rem 0}
+    input, textarea{
+      width:100%; padding:.85rem 1rem; border-radius:12px; background:rgba(14,25,48,.6);
+      border:1px solid var(--stroke); color:var(--text); outline:none;
+    }
+    input:focus, textarea:focus{border-color:#2a74ff; box-shadow:0 0 0 4px rgba(42,116,255,.12)}
+    .note{font-size:.9rem; color:var(--muted)}
+    .status{margin-top:.6rem; font-size:.95rem}
+    iframe.map{width:100%; height:260px; border:0; border-radius:12px; filter: saturate(1.1) contrast(1.05) brightness(.95)}
+
+    footer{
+      padding:28px 0; color:var(--muted); border-top:1px solid rgba(255,255,255,.06);
+      background:linear-gradient(0deg, rgba(6,9,19,.6), rgba(6,9,19,0));
+    }
+
+    /* Reveal on view */
+    .reveal{opacity:0; transform: translateY(10px); transition: all .7s ease}
+    .reveal.show{opacity:1; transform: translateY(0)}
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      html{scroll-behavior:auto}
+      .rocket,.flame,.asteroid,.scroll-indicator .dot,.tech .card:hover,.brand .logo::after,.radar .sweep{animation:none}
+    }
+
+    /* Utility spacing */
+    .mt-1{margin-top:.5rem}.mt-2{margin-top:1rem}.mt-3{margin-top:1.5rem}.mt-4{margin-top:2rem}
+    .center{text-align:center}
+  </style>
+</head>
+<body>
+  <canvas id="stars"></canvas>
+  <canvas id="stars2"></canvas>
+  <div class="space-gradient" aria-hidden="true"></div>
+
+  <header>
+    <div class="container" style="display:flex; align-items:center; gap:1.1rem">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <div style="font-size:1.1rem">Spacepie</div>
+          <div class="badge">Indore, India</div>
+        </div>
+      </div>
+      <nav class="desktop">
+        <a href="#hero">Home</a>
+        <a href="#problem">The Problem</a>
+        <a href="#solution">Our Solution</a>
+        <a href="#journey">How It Works</a>
+        <a href="#technology">Technology</a>
+        <a href="#safety">Safety</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu">☰</button>
+    </div>
+  </header>
+  <div class="mobile-drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
+    <a href="#hero">Home</a>
+    <a href="#problem">The Problem</a>
+    <a href="#solution">Our Solution</a>
+    <a href="#journey">How It Works</a>
+    <a href="#technology">Technology</a>
+    <a href="#safety">Safety</a>
+    <a href="#contact">Contact</a>
+  </div>
+
+  <main>
+    <section id="hero" class="reveal">
+      <div class="container hero-grid">
+        <div class="hero">
+          <div class="eyebrow">Mining the Future Beyond Earth</div>
+          <h1>We Mine the Moon. We Harvest Asteroids. We Power Earth.</h1>
+          <p class="section-sub">Spacepie uses in-house robots, AI systems, and rockets to safely extract non-hazardous resources for sustainable industry.</p>
+          <div class="hero-actions">
+            <a class="btn" href="#solution">Explore Our Mission</a>
+            <a class="btn secondary" href="#journey">How It Works</a>
+          </div>
+          <p class="hero-note">Only non-harmful, low-risk materials are returned to Earth. Always unmanned. Always controlled.</p>
+        </div>
+        <div style="position:relative; min-height:300px">
+          <div class="orbital" aria-hidden="true">
+            <svg viewBox="0 0 520 420">
+              <defs>
+                <linearGradient id="g1" x1="0" x2="1">
+                  <stop offset="0" stop-color="#6bdcff"/>
+                  <stop offset="1" stop-color="#9d7bff"/>
+                </linearGradient>
+                <filter id="glow">
+                  <feGaussianBlur stdDeviation="2.5" result="b"/>
+                  <feMerge>
+                    <feMergeNode in="b"/><feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
+              <!-- Orbit paths -->
+              <ellipse cx="260" cy="210" rx="220" ry="110" fill="none" stroke="url(#g1)" stroke-opacity=".25"/>
+              <ellipse cx="260" cy="210" rx="160" ry="80" fill="none" stroke="url(#g1)" stroke-opacity=".18"/>
+              <!-- Rocket -->
+              <g class="rocket" transform="translate(420 160)">
+                <path d="M0 0 L22 8 L0 16 Z" fill="#9d7bff" opacity=".9" filter="url(#glow)"/>
+                <path d="M-8 -12 L28 0 L-8 12 Z" fill="url(#g1)"/>
+                <rect class="flame" x="-16" y="-4" width="10" height="8" rx="4" fill="#ffb74d"/>
+              </g>
+              <!-- Asteroid -->
+              <g class="asteroid" transform="translate(120 270) scale(1.2)">
+                <path d="M0-24 L18-14 L22 0 L12 16 L-6 20 L-18 6 L-16 -12 Z" fill="#6d7a95"/>
+                <circle cx="-6" cy="-6" r="3" fill="#8ea1bf"/>
+                <circle cx="8" cy="6" r="4" fill="#8ea1bf"/>
+              </g>
+              <!-- Moon -->
+              <g transform="translate(250 200)">
+                <circle r="38" fill="#d9e4f7" opacity=".9"/>
+                <circle r="36" fill="#b9c8e4"/>
+                <circle cx="-12" cy="-8" r="6" fill="#a3b5d7"/>
+                <circle cx="10" cy="12" r="8" fill="#9db1d8"/>
+              </g>
+              <!-- Data flow -->
+              <path d="M420 160 C 360 120, 300 140, 250 200 C 210 240, 160 260, 120 270" stroke="url(#g1)" stroke-width="2" fill="none" stroke-dasharray="8 10">
+                <animate attributeName="stroke-dashoffset" from="0" to="100" dur="3s" repeatCount="indefinite" />
+              </path>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-indicator"><div class="dot"></div><div>Scroll</div></div>
+    </section>
+
+    <section id="problem" class="reveal">
+      <div class="container">
+        <h2 class="section-title">The Problem</h2>
+        <p class="section-sub">Earth’s resources are finite. Traditional mining is destructive. Industry needs a safer path.</p>
+        <div class="grid-3">
+          <div class="card">
+            <div class="stat">
+              <div class="icon">⛏️</div>
+              <div>
+                <strong>Resource Exhaustion</strong>
+                <p class="note">Critical metals and rare elements face accelerating depletion.</p>
+                <div class="bar" aria-label="Resource exhaustion">
+                  <span data-progress="78"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="stat">
+              <div class="icon">🌍</div>
+              <div>
+                <strong>Environmental Damage</strong>
+                <p class="note">Land disruption, water contamination, and emissions from traditional mining.</p>
+                <div class="bar" aria-label="Environmental damage">
+                  <span data-progress="64" style="background:linear-gradient(90deg, var(--warn), var(--danger))"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="stat">
+              <div class="icon">📈</div>
+              <div>
+                <strong>Rising Demand</strong>
+                <p class="note">Clean energy and electronics need more non-hazardous materials than ever.</p>
+                <div class="bar" aria-label="Demand vs supply">
+                  <span data-progress="85" style="background:linear-gradient(90deg, #67e8a9, #ffd166)"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="note mt-2">We need a new supply chain that doesn’t cost Earth its future.</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="container">
+        <h2 class="section-title">Our Solution — Spacepie</h2>
+        <p class="section-sub">We mine in space, refine on the Moon, and deliver only safe, non-hazardous materials to Earth.</p>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Asteroid Selection</h3>
+            <p><span class="tick">✓</span> Only low-risk, non-hazardous bodies selected via spectral analysis and trajectory safety checks.</p>
+            <div class="mini mt-2" role="img" aria-label="Asteroid selection visualization">
+              <div class="dots"></div>
+              <div style="position:absolute; inset:auto auto 16px 16px; display:flex; align-items:center; gap:.5rem">
+                <div class="pulse-dot"></div><div class="badge">Low-risk candidate</div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Moon-based Processing</h3>
+            <p><span class="tick">✓</span> Materials are transferred to lunar facilities for sorting, refining, and verification.</p>
+            <div class="mini mt-2">
+              <svg viewBox="0 0 380 90" width="100%" height="100%">
+                <defs><linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="#6bdcff"/><stop offset="1" stop-color="#9d7bff"/></linearGradient></defs>
+                <circle cx="40" cy="45" r="18" fill="#bcd3f2"/>
+                <rect x="130" y="20" width="120" height="50" rx="10" fill="rgba(155,200,255,.15)" stroke="url(#lg)"/>
+                <path d="M58 45 H130" stroke="url(#lg)" stroke-width="3">
+                  <animate attributeName="stroke-dasharray" values="0 200; 200 0; 0 200" dur="3s" repeatCount="indefinite"/>
+                </path>
+                <rect x="280" y="30" width="60" height="30" rx="12" fill="rgba(107,220,255,.2)"/>
+              </svg>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Robotic Extraction</h3>
+            <p><span class="tick">✓</span> Modular, autonomous robots mine and package material with no human exposure.</p>
+            <div class="mini mt-2">
+              <svg viewBox="0 0 380 90" width="100%" height="100%">
+                <g transform="translate(70,45)">
+                  <circle r="14" fill="#8ab6ff"/>
+                  <g transform="rotate(-25)">
+                    <rect x="10" y="-3" width="100" height="6" rx="3" fill="#bcd3ff">
+                      <animateTransform attributeName="transform" type="rotate" values="-25; 10; -25" dur="3s" repeatCount="indefinite"/>
+                    </rect>
+                    <polygon points="110,-6 130,0 110,6" fill="#ffd166"/>
+                  </g>
+                </g>
+              </svg>
+            </div>
+          </div>
+          <div class="card">
+            <h3>AI-Controlled Safety</h3>
+            <p><span class="tick">✓</span> Redundant AI flight and risk control maintain safe routes and payload integrity.</p>
+            <div class="mini mt-2">
+              <svg viewBox="0 0 380 90" width="100%" height="100%">
+                <defs><linearGradient id="lg2" x1="0" x2="1"><stop offset="0" stop-color="#67e8a9"/><stop offset="1" stop-color="#4bc1ff"/></linearGradient></defs>
+                <path d="M20 70 C 90 10, 170 10, 340 70" stroke="url(#lg2)" stroke-width="3" fill="none" stroke-dasharray="8 8">
+                  <animate attributeName="stroke-dashoffset" from="0" to="120" dur="2.5s" repeatCount="indefinite"/>
+                </path>
+                <circle cx="200" cy="40" r="10" fill="#67e8a9"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="journey" class="reveal">
+      <div class="container">
+        <h2 class="section-title">How It Works — Step-by-Step Journey</h2>
+        <p class="section-sub">From space → Moon → Earth. A controlled, closed-loop logistics and safety chain.</p>
+        <div class="steps">
+          <div class="stepper" id="stepper">
+            <div class="step">
+              <div class="num">1</div>
+              <h4>Detect & Analyze</h4>
+              <p class="note">Spectral scans identify low-risk, non-hazardous asteroids.</p>
+              <div class="mini">
+                <div class="dots"></div>
+                <svg viewBox="0 0 380 90" width="100%" height="100%" style="position:absolute; inset:0">
+                  <circle cx="70" cy="45" r="8" fill="#67e8a9"/>
+                  <circle cx="170" cy="40" r="6" fill="#9d7bff"/>
+                  <circle cx="260" cy="50" r="7" fill="#6bdcff"/>
+                  <path d="M70 45 Q 120 20 170 40 T 260 50" stroke="#67e8a9" stroke-width="2" fill="none" stroke-dasharray="4 6">
+                    <animate attributeName="stroke-dashoffset" from="0" to="60" dur="2s" repeatCount="indefinite"/>
+                  </path>
+                </svg>
+              </div>
+            </div>
+            <div class="step">
+              <div class="num">2</div>
+              <h4>Robotic Mining</h4>
+              <p class="note">Autonomous arms collect and package ore without human presence.</p>
+              <div class="mini">
+                <svg viewBox="0 0 380 90" width="100%" height="100%">
+                  <g transform="translate(60,45)">
+                    <circle r="12" fill="#9d7bff"/>
+                    <g transform="rotate(0)">
+                      <rect x="8" y="-2" width="70" height="4" rx="2" fill="#c9b8ff">
+                        <animateTransform attributeName="transform" type="rotate" values="-10; 18; -10" dur="2.8s" repeatCount="indefinite"/>
+                      </rect>
+                      <rect x="78" y="-6" width="10" height="12" rx="2" fill="#ffd166"/>
+                    </g>
+                  </g>
+                </svg>
+              </div>
+            </div>
+            <div class="step">
+              <div class="num">3</div>
+              <h4>Transfer to Moon</h4>
+              <p class="note">Material ferried to lunar orbit and down to processing hubs.</p>
+              <div class="mini">
+                <svg viewBox="0 0 380 90" width="100%" height="100%">
+                  <defs><linearGradient id="lg3" x1="0" x2="1"><stop offset="0" stop-color="#6bdcff"/><stop offset="1" stop-color="#9d7bff"/></linearGradient></defs>
+                  <path d="M40 70 C 140 10, 240 10, 340 70" stroke="url(#lg3)" stroke-width="2" fill="none" stroke-dasharray="6 8">
+                    <animate attributeName="stroke-dashoffset" from="0" to="120" dur="3s" repeatCount="indefinite"/>
+                  </path>
+                  <circle cx="340" cy="70" r="10" fill="#bcd3f2"/>
+                </svg>
+              </div>
+            </div>
+            <div class="step">
+              <div class="num">4</div>
+              <h4>Refine & Verify</h4>
+              <p class="note">Lunar labs refine materials and verify safety—only non-hazardous payloads approved.</p>
+              <div class="mini">
+                <svg viewBox="0 0 380 90" width="100%" height="100%">
+                  <rect x="130" y="18" width="120" height="54" rx="10" fill="rgba(103,232,169,.15)" stroke="#67e8a9"/>
+                  <text x="190" y="50" fill="#67e8a9" text-anchor="middle" font-size="12" font-weight="bold">SAFE</text>
+                </svg>
+              </div>
+            </div>
+            <div class="step">
+              <div class="num">5</div>
+              <h4>Controlled Delivery</h4>
+              <p class="note">Rockets deliver approved materials to Earth with precision landings.</p>
+              <div class="mini">
+                <svg viewBox="0 0 380 90" width="100%" height="100%">
+                  <path d="M50 25 L90 40 L50 55 Z" fill="#9d7bff"/>
+                  <rect x="40" y="37" width="10" height="6" rx="3" fill="#ffb74d">
+                    <animate attributeName="opacity" values="0.4;1;0.4" dur="0.3s" repeatCount="indefinite"/>
+                  </rect>
+                  <rect x="250" y="25" width="80" height="40" rx="10" fill="rgba(107,220,255,.2)"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="flow"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="technology" class="reveal">
+      <div class="container">
+        <h2 class="section-title">Our Technology</h2>
+        <p class="section-sub">Designed and built in-house to work together as one intelligent system.</p>
+        <div class="tech">
+          <div class="card">
+            <div class="chip">🤖 Mining Robots</div>
+            <h3 class="mt-1">Modular, Autonomous</h3>
+            <p class="note">Redundant joints, self-healing software, and vacuum-rated tools for precision extraction.</p>
+            <div class="mini mt-2">
+              <svg viewBox="0 0 380 90" width="100%" height="100%">
+                <g transform="translate(90,45)">
+                  <circle r="13" fill="#8ab6ff"/>
+                  <rect x="10" y="-3" width="70" height="6" rx="3" fill="#bcd3ff">
+                    <animateTransform attributeName="transform" type="rotate" values="-12; 12; -12" dur="3s" repeatCount="indefinite"/>
+                  </rect>
+                  <circle cx="85" cy="0" r="6" fill="#ffd166"/>
+                </g>
+              </svg>
+            </div>
+          </div>
+          <div class="card">
+            <div class="chip">🚀 Rockets & Transport</div>
+            <h3 class="mt-1">Reusable, Precise</h3>
+            <p class="note">In-space tugs and lunar landers with autonomous rendezvous and docking.</p>
+            <div class="mini mt-2">
+              <svg viewBox="0 0 380 90" width="100%" height="100%">
+                <path d="M60 45 L95 58 L60 71 Z" fill="#9d7bff"/>
+                <path d="M100 60 H300" stroke="#6bdcff" stroke-width="2" stroke-dasharray="10 8">
+                  <animate attributeName="stroke-dashoffset" from="0" to="90" dur="2s" repeatCount="indefinite"/>
+                </path>
+              </svg>
+            </div>
+          </div>
+          <div class="card">
+            <div class="chip">🧠 AI & Navigation</div>
+            <h3 class="mt-1">Adaptive Autonomy</h3>
+            <p class="note">Multi-agent AI plans routes, optimizes fuel, and supervises safety across the fleet.</p>
+            <div class="mini mt-2">
+              <svg viewBox="0 0 380 90" width="100%" height="100%">
+                <circle cx="120" cy="45" r="8" fill="#67e8a9"/>
+                <circle cx="200" cy="30" r="8" fill="#9d7bff"/>
+                <circle cx="260" cy="60" r="8" fill="#6bdcff"/>
+                <path d="M120 45 L200 30 L260 60" stroke="#67e8a9" stroke-width="2" fill="none"/>
+              </svg>
+            </div>
+          </div>
+          <div class="card">
+            <div class="chip">🛡️ Safety & Risk</div>
+            <h3 class="mt-1">Safety First</h3>
+            <p class="note">Only non-hazardous payloads pass. Continuous risk checks and failsafe re-entry profiles.</p>
+            <div class="mini mt-2">
+              <svg viewBox="0 0 380 90" width="100%" height="100%">
+                <rect x="140" y="20" width="100" height="50" rx="12" fill="rgba(103,232,169,.15)" stroke="#67e8a9"/>
+                <path d="M170 50 l10 10 20 -24" stroke="#67e8a9" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="safety" class="reveal">
+      <div class="container">
+        <h2 class="section-title">Sustainability & Safety</h2>
+        <p class="section-sub">Spacepie is designed to be safe for people and for Earth—today and tomorrow.</p>
+        <div class="safety">
+          <div class="card">
+            <ul class="safety-list" style="list-style:none; padding:0; margin:0">
+              <li><span class="check">✔</span> Only non-harmful asteroids and materials are selected and transported.</li>
+              <li><span class="check">✔</span> Zero human exposure: fully unmanned operations and remote verification.</li>
+              <li><span class="check">✔</span> Minimal Earth impact with precise, reusable landing systems.</li>
+              <li><span class="check">✔</span> Closed-loop lunar processing prevents contamination and waste.</li>
+              <li><span class="check">✔</span> Continuous AI risk checks and redundant failsafes.</li>
+            </ul>
+            <div class="mt-3">
+              <span class="badge">Auditable</span>
+              <span class="badge">Telemetry-first</span>
+              <span class="badge">Sustainable</span>
+            </div>
+          </div>
+          <div class="radar card">
+            <div class="sweep"></div>
+            <div class="spot" style="left:20%; top:40%"></div>
+            <div class="spot" style="left:60%; top:30%"></div>
+            <div class="spot" style="left:70%; top:65%"></div>
+            <div style="position:absolute; inset:auto 12px 12px auto; background:rgba(6,9,19,.7); border:1px solid var(--stroke); border-radius:10px; padding:.4rem .6rem; font-size:.85rem; color:#c9efff">
+              Targets screened: safe
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="reveal">
+      <div class="container">
+        <h2 class="section-title">Headquarters & Contact</h2>
+        <p class="section-sub">We’re building Earth’s future from space — from Indore, India.</p>
+        <div class="contact-grid">
+          <div class="card">
+            <h3>Spacepie</h3>
+            <p class="note">Asteroid & Lunar Mining — Safe, sustainable resources for Earth.</p>
+            <p><strong>Headquarters:</strong> Indore, India</p>
+            <p><strong>Phone:</strong> <a href="tel:+918109801383">+91 8109801383</a></p>
+            <iframe class="map mt-2" title="Indore Map" src="https://www.openstreetmap.org/export/embed.html?bbox=75.786%2C22.63%2C76.07%2C22.84&amp;layer=mapnik&amp;marker=22.7196%2C75.8577"></iframe>
+            <p class="note mt-1">Map powered by OpenStreetMap</p>
+          </div>
+          <div class="card">
+            <h3>Contact Form</h3>
+            <p class="note">Send us a message. We’ll get back within 2 business days.</p>
+            <form id="contactForm" novalidate>
+              <div class="row">
+                <div>
+                  <label for="name">Name</label>
+                  <input id="name" name="name" placeholder="Your name" required />
+                </div>
+                <div>
+                  <label for="email">Email</label>
+                  <input id="email" name="email" type="email" placeholder="you@example.com" required />
+                </div>
+              </div>
+              <div class="mt-1">
+                <label for="phone">Phone</label>
+                <input id="phone" name="phone" placeholder="+91 ..." />
+              </div>
+              <div class="mt-1">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" rows="4" placeholder="How can we help?" required></textarea>
+              </div>
+              <div class="mt-2" style="display:flex; gap:.6rem; flex-wrap:wrap">
+                <button class="btn" type="submit">Send Message</button>
+                <a class="btn secondary" href="mailto:hello@spacepie.space?subject=Inquiry%20from%20Website">Email Instead</a>
+              </div>
+              <div id="formStatus" class="status" aria-live="polite"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container" style="display:flex; flex-wrap:wrap; align-items:center; gap:1rem; justify-content:space-between">
+      <div>
+        <strong>Spacepie</strong> — Mining the Future Beyond Earth.
+        <div class="note">Building Earth’s future from space.</div>
+      </div>
+      <div class="note">Contact: +91 8109801383 • Indore, India</div>
+    </div>
+  </footer>
+
+  <noscript>
+    <div style="position:fixed; bottom:0; left:0; right:0; background:#1b2740; color:#fff; padding:8px 16px; text-align:center; border-top:1px solid rgba(255,255,255,.2); z-index:999">
+      JavaScript is disabled. Animations are paused and the form will not submit automatically.
+    </div>
+  </noscript>
+
+  <script>
+    // Mobile drawer
+    (function(){
+      const btn = document.getElementById('menuBtn');
+      const drawer = document.getElementById('drawer');
+      btn?.addEventListener('click', ()=> drawer.classList.toggle('open'));
+      drawer.querySelectorAll('a').forEach(a=>a.addEventListener('click', ()=> drawer.classList.remove('open')));
+    })();
+
+    // Starfield background (two parallax layers)
+    (function(){
+      const c1 = document.getElementById('stars');
+      const c2 = document.getElementById('stars2');
+      const ctx1 = c1.getContext('2d');
+      const ctx2 = c2.getContext('2d');
+      let w = c1.width = c2.width = innerWidth;
+      let h = c1.height = c2.height = innerHeight;
+      let pReduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const starsA = [], starsB = [];
+      const countA = Math.min(150, Math.floor((w*h)/12000));
+      const countB = Math.min(90, Math.floor((w*h)/20000));
+      function randStar(layer){
+        return {
+          x: Math.random()*w,
+          y: Math.random()*h,
+          z: Math.random()*1 + (layer===1?0.6:0.2),
+          r: Math.random()*1.4 + (layer===1?0.4:0.2),
+          v: (layer===1?0.15:0.05) + Math.random()*0.1
+        }
+      }
+      for(let i=0;i<countA;i++) starsA.push(randStar(1));
+      for(let i=0;i<countB;i++) starsB.push(randStar(2));
+
+      let tiltX = 0, tiltY = 0;
+      window.addEventListener('mousemove', e=>{
+        const rx = (e.clientX / w - 0.5)*2;
+        const ry = (e.clientY / h - 0.5)*2;
+        tiltX = rx; tiltY = ry;
+      }, {passive:true});
+
+      window.addEventListener('resize', ()=>{
+        w = c1.width = c2.width = innerWidth;
+        h = c1.height = c2.height = innerHeight;
+      });
+
+      let running = true;
+      document.addEventListener('visibilitychange', ()=> running = !document.hidden);
+
+      function draw(ctx, list, intensity){
+        ctx.clearRect(0,0,w,h);
+        ctx.fillStyle = 'white';
+        list.forEach(s=>{
+          const dx = tiltX * s.z * 8 * intensity;
+          const dy = tiltY * s.z * 8 * intensity;
+          ctx.globalAlpha = 0.6 + s.z*0.4;
+          ctx.beginPath();
+          ctx.arc(s.x + dx, s.y + dy, s.r, 0, Math.PI*2);
+          ctx.fill();
+          if(!pReduce){
+            s.x += s.v * intensity;
+            if(s.x - 2 > w) s.x = -2;
+          }
+        });
+        ctx.globalAlpha = 1;
+      }
+      (function loop(){
+        if(running){
+          draw(ctx1, starsA, 1.0);
+          draw(ctx2, starsB, 0.6);
+        }
+        requestAnimationFrame(loop);
+      })();
+    })();
+
+    // Reveal on scroll + animate bars
+    (function(){
+      const items = document.querySelectorAll('.reveal');
+      const bars = document.querySelectorAll('.bar > span');
+      const io = new IntersectionObserver((ents)=>{
+        ents.forEach(ent=>{
+          if(ent.isIntersecting){
+            ent.target.classList.add('show');
+            if(ent.target.querySelector('.bar')) {
+              ent.target.querySelectorAll('.bar > span').forEach(s=>{
+                const p = s.getAttribute('data-progress') || 0;
+                s.style.width = p + '%';
+              });
+            }
+          }
+        });
+      }, {threshold: .15});
+      items.forEach(el=> io.observe(el));
+      // Also trigger bars that might be outside .reveal
+      const io2 = new IntersectionObserver((ents)=>{
+        ents.forEach(ent=>{
+          if(ent.isIntersecting){
+            const s = ent.target;
+            const p = s.getAttribute('data-progress') || 0;
+            s.style.width = p + '%';
+            io2.unobserve(s);
+          }
+        });
+      }, {threshold:.4});
+      bars.forEach(b=> io2.observe(b));
+    })();
+
+    // Stepper: highlight visible step on scroll and allow arrow keys
+    (function(){
+      const stepper = document.getElementById('stepper');
+      if(!stepper) return;
+      const steps = Array.from(stepper.querySelectorAll('.step'));
+      const highlight = ()=> {
+        const rect = stepper.getBoundingClientRect();
+        let bestIdx = 0, best = -Infinity;
+        steps.forEach((s, i)=>{
+          const r = s.getBoundingClientRect();
+          const visible = Math.min(rect.right, r.right) - Math.max(rect.left, r.left);
+          if(visible > best){best = visible; bestIdx = i;}
+        });
+        steps.forEach((s,i)=> s.style.outline = i===bestIdx ? '1px solid rgba(107,220,255,.5)' : '1px solid transparent');
+      };
+      stepper.addEventListener('scroll', ()=> requestAnimationFrame(highlight));
+      highlight();
+      // Arrow key navigation when focused
+      stepper.setAttribute('tabindex', '0');
+      stepper.addEventListener('keydown', e=>{
+        if(e.key === 'ArrowRight') stepper.scrollBy({left: 260, behavior: 'smooth'});
+        if(e.key === 'ArrowLeft') stepper.scrollBy({left: -260, behavior: 'smooth'});
+      });
+    })();
+
+    // Contact form "functional" submission: validate, store, and show success
+    (function(){
+      const form = document.getElementById('contactForm');
+      const status = document.getElementById('formStatus');
+      function validEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v || '')}
+      form?.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        status.textContent = '';
+        const data = Object.fromEntries(new FormData(form).entries());
+        if(!data.name || !validEmail(data.email) || !data.message){
+          status.style.color = 'var(--warn)';
+          status.textContent = 'Please fill name, a valid email, and a message.';
+          return;
+        }
+        // Simulate async send and persist locally
+        status.style.color = 'var(--muted)';
+        status.textContent = 'Sending...';
+        setTimeout(()=>{
+          try{
+            const key = 'spacepie_messages';
+            const prev = JSON.parse(localStorage.getItem(key) || '[]');
+            prev.push({...data, ts: new Date().toISOString()});
+            localStorage.setItem(key, JSON.stringify(prev));
+          }catch(e){}
+          status.style.color = 'var(--good)';
+          status.textContent = 'Thank you! Your message has been received.';
+          form.reset();
+        }, 600);
+      });
+    })();
+  </script>
+</body>
+</html>
